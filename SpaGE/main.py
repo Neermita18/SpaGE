@@ -58,6 +58,9 @@ def SpaGE(Spatial_data,RNA_data,n_pv,genes_to_predict=None):
     Spatial_data_scaled = pd.DataFrame(data=st.zscore(Spatial_data,axis=0),
                                    index = Spatial_data.index,columns=Spatial_data.columns)
     Common_data = RNA_data_scaled[np.intersect1d(Spatial_data_scaled.columns,RNA_data_scaled.columns)]
+    if Common_data.isnull().any().any():
+        raise ValueError("NaN values detected in Common_data after scaling. Maybe you forgot to delete lowly-expressed gene?")
+    Common_data = Common_data.dropna(axis=1, how='all')
 
     Y_train = RNA_data[genes_to_predict]
     
